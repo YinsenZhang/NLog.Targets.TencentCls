@@ -31,3 +31,27 @@ TestCls/Program.Main()
             var body = logGroupList.ToByteArray();
 
             var res = client.CallOctetStream("UploadLog", Service, headers, body).Result;
+```
+## NlogTarget 配置
+参考TestWebApi
+```xml
+<nlog>
+  <extensions>
+    <add assembly="NLog.Targets.TencentCls"/>
+  </extensions>
+  <targets>
+     <!-- cls Target  -->
+	  <target xsi:type="TencentCls" name="CLS" SecretId="XXXX" 
+			  SecretKey="XXXX" Region="ap-shanghai" TopicId="8e8edc72-bf58-4d8e-8240-892494981266">
+		  <layout xsi:type="JsonLayout" includeEventProperties="Boolean" excludeProperties="Comma-separated list (string)">
+			  <attribute name="time" layout="${longdate}" />
+			  <attribute name="level" layout="${level:upperCase=true}"/>
+			  <attribute name="callsite" layout="${callsite}" />
+			  <attribute name="message" layout="${message}" />
+		  </layout>
+	  </target>
+  </targets
+  <rules>
+     <logger name="TestWebApi.*" minlevel="Trace" writeTo="CLS" />
+  </rules>
+  ```
