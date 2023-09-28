@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Dynamic;
 using System.Globalization;
-using Newtonsoft.Json;
 using System.IO;
 
 namespace NLog.Targets.TencentClsTarget
@@ -17,16 +17,22 @@ namespace NLog.Targets.TencentClsTarget
             {
                 case "System.Boolean":
                     return Convert.ToBoolean(field, formatProvider);
+
                 case "System.Double":
                     return Convert.ToDouble(field, formatProvider);
+
                 case "System.DateTime":
                     return Convert.ToDateTime(field, formatProvider);
+
                 case "System.Int32":
                     return Convert.ToInt32(field, formatProvider);
+
                 case "System.Int64":
                     return Convert.ToInt64(field, formatProvider);
+
                 case "System.Object":
                     return field.ToExpandoObject(jsonSerializer);
+
                 default:
                     return field;
             }

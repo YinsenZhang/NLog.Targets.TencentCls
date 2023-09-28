@@ -1,6 +1,6 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using NLog.Config;
+using System;
 
 namespace NLog.Targets.TencentClsTarget
 {
@@ -23,13 +23,14 @@ namespace NLog.Targets.TencentClsTarget
             get => _jsonConverter ?? (_jsonConverter = ObjectType != null ? new JsonToStringConverter(ObjectType) : null);
             set => _jsonConverter = value;
         }
+
         private JsonConverter _jsonConverter;
 
         /// <summary>
         /// Initializes new instance of <see cref="ObjectTypeConvert"/>
         /// </summary>
         public ObjectTypeConvert()
-            :this(null)
+            : this(null)
         {
         }
 

@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Net.Mime;
 using System.Security.Cryptography;
 using System.Text;
 using TencentCloud.Common;
@@ -112,7 +111,6 @@ namespace TestCls
 
         private static Dictionary<string, string> BuildHeaders(this AbstractClient client)
         {
-
             Dictionary<string, string> headers = new Dictionary<string, string>
             {
                 //{ "Authorization", authorization },
@@ -129,7 +127,8 @@ namespace TestCls
             };
             return headers;
         }
-        private static string GetAuthorization(this AbstractClient client, Dictionary<String, String> headers,string service, byte[] body)
+
+        private static string GetAuthorization(this AbstractClient client, Dictionary<String, String> headers, string service, byte[] body)
         {
             string endpoint = client.Endpoint;
             string contentType = headers["Content-Type"];
@@ -176,6 +175,7 @@ namespace TestCls
 
             return authorization;
         }
+
         private static string SHA256Hex(byte[] bytes)
         {
             //byte[] array = sHA.ComputeHash(Encoding.UTF8.GetBytes(s));

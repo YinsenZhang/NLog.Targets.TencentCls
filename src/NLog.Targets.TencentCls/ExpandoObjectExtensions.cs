@@ -6,7 +6,7 @@ namespace NLog.Targets.TencentClsTarget
     internal static class ExpandoObjectExtensions
     {
         /// <summary>
-        /// Replaces dot ('.') character in Keys with an underscore ('_') 
+        /// Replaces dot ('.') character in Keys with an underscore ('_')
         /// </summary>
         /// <returns>ExpandoObject</returns>
         public static ExpandoObject ReplaceDotInKeys(this ExpandoObject obj, bool alwaysCloneObject = true)
@@ -20,11 +20,13 @@ namespace NLog.Targets.TencentClsTarget
                         if (clone == null)
                             return obj.ReplaceDotInKeys();
                         break;
+
                     case ExpandoObject expandoObject:
                         if (clone == null)
                             return obj.ReplaceDotInKeys();
                         ((IDictionary<string, object>)clone)[item.Key.Replace('.', '_')] = expandoObject.ReplaceDotInKeys();
                         break;
+
                     default:
                         if (item.Key.Contains('.'))
                         {

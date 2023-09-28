@@ -3,20 +3,9 @@
 using Cls;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
-using System;
-using System.Collections.Immutable;
-using System.Net;
-using System.Net.Http.Json;
-using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
-using TencentCloud.Common.Profile;
 using TencentCloud.Common;
-using TestCls;
-using System.Collections;
-using System.Net.Http.Headers;
-using Newtonsoft.Json.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 public static class Program12
 {
@@ -26,10 +15,11 @@ public static class Program12
     private const string SECRET_KEY = "XXXX";
 
     private const string _service = "cls";
-    private const string _region = "ap-shanghai"; 
+    private const string _region = "ap-shanghai";
     private const string _action = "UploadLog";
     private const string _contentType = "application/octet-stream";
-    public static void Main1(string[]  args)
+
+    public static void Main1(string[] args)
     {
         HttpClient client = new HttpClient();
         HttpRequestMessage request = new HttpRequestMessage();
@@ -38,11 +28,10 @@ public static class Program12
         //client.DefaultRequestHeaders.Add("Content-Type", "application/x-protobuf");
         request.RequestUri = new Uri("https://cls.tencentcloudapi.com/");
 
-
         Cls.LogGroupList logGroupList = new Cls.LogGroupList();
         LogGroup logGroup = new LogGroup();
         Log log = new Log();
-        Log.Types.Content content = new Log.Types.Content() { Key="reqId",Value="88888888888888"};
+        Log.Types.Content content = new Log.Types.Content() { Key = "reqId", Value = "88888888888888" };
         log.Contents.Add(content);
         log.Time = DateTime.UtcNow.ToTimestamp().Seconds;
         logGroup.Logs.Add(log);
@@ -62,7 +51,7 @@ public static class Program12
         //request.Content = new StringContent(stringPayload);
         //var s1 = System.IO.File.OpenText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "binary.data")).ReadToEnd();
         //string stringValue = @"\n\xdf\x01\n\xdc\x01\x08\xf3\x94\xb0\x87\x06\x12\xd3\x01\nWname,index,test_name_index,3GUrb6IKT7CV5kxapuHJPvOBt12AnS8FY9wciQqLgyWoDZlNEdMs4R0mhjXf\x12xTsJI527bHeWNrS9qmY6LlpvfOhwgGonP4yUzKdVc8kjR1BxCiA0aEtXFQMuD36ESxWr10Rw25qtpYdUavIoHNMAZ7uFsnh8P9eKQj4DVcLBzCgflibyXmOkG";
-        var hh= BuildHeaders(_contentType, body, "");
+        var hh = BuildHeaders(_contentType, body, "");
         foreach (var kvp in hh)
         {
             if (kvp.Key.Equals("Content-Type"))
@@ -88,13 +77,13 @@ public static class Program12
         request.Headers.Add("X-CLS-TopicId", "8e8edc72-bf58-4d8e-8240-892494981266");
         request.Headers.Add("X-TC-Action", "UploadLog");
         //client.BaseAddress = new Uri(_endpoint);
-        var res = client.Send(request); 
+        var res = client.Send(request);
         StreamReader sr = new StreamReader(res.Content.ReadAsStream(), Encoding.UTF8);
         //var result = sr.ReadToEnd().Trim();
         var result = res.Content.ReadAsStringAsync().Result;
         sr.Close();
-
     }
+
     private static Dictionary<string, string> BuildHeaders(string contentType, byte[] body, string canonicalQueryString)
     {
         string endpoint = _endpoint;
@@ -102,7 +91,7 @@ public static class Program12
         //{
         //    endpoint = this.Profile.HttpProfile.Endpoint;
         //}
-        string httpRequestMethod ="POST";
+        string httpRequestMethod = "POST";
         string canonicalURI = "/";
         string canonicalHeaders = "content-type:" + contentType + "\nhost:" + endpoint + "\n";
         string signedHeaders = "content-type;host";
@@ -121,7 +110,7 @@ public static class Program12
         long timestamp = DateTime.UtcNow.ToTimestamp().Seconds;
         string requestTimestamp = timestamp.ToString();
         string date = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(timestamp).ToString("yyyy-MM-dd");
-        string service =_service;
+        string service = _service;
         string credentialScope = date + "/" + service + "/" + "tc3_request";
         string hashedCanonicalRequest = SignHelper.SHA256Hex(canonicalRequest);
         string stringToSign = algorithm + "\n"
@@ -136,7 +125,7 @@ public static class Program12
         byte[] secretService = SignHelper.HmacSHA256(secretDate, Encoding.UTF8.GetBytes(service));
         byte[] secretSigning = SignHelper.HmacSHA256(secretService, Encoding.UTF8.GetBytes("tc3_request"));
         byte[] signatureBytes = SignHelper.HmacSHA256(secretSigning, Encoding.UTF8.GetBytes(stringToSign));
-        
+
         string signature = BitConverter.ToString(signatureBytes).Replace("-", "").ToLower();
         //string signature = SignHelper(SECRET_KEY,);
 
@@ -176,6 +165,7 @@ public static class Program12
         }
         return headers;
     }
+
     private static long ToTimestamp()
     {
 #if NET45
@@ -185,12 +175,11 @@ public static class Program12
             return unixTime;
 #endif
 
-            DateTimeOffset expiresAtOffset = DateTimeOffset.Now;
-            var totalSeconds = expiresAtOffset.ToUnixTimeMilliseconds();
-            return totalSeconds;
-
-
+        DateTimeOffset expiresAtOffset = DateTimeOffset.Now;
+        var totalSeconds = expiresAtOffset.ToUnixTimeMilliseconds();
+        return totalSeconds;
     }
+
     public static string SHA256Hex(byte[] bytes)
     {
         //byte[] array = sHA.ComputeHash(Encoding.UTF8.GetBytes(s));

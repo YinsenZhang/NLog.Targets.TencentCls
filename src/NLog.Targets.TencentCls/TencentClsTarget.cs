@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Linq;
-using System.Threading;
+﻿using Cls;
+using Google.Protobuf;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 using NLog.Common;
 using NLog.Config;
 using NLog.Layouts;
+using NLog.Targets.TencentCls;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using TencentCloud.Cls.V20201016;
 using TencentCloud.Common;
-using Cls;
-using Google.Protobuf;
-using NLog.Targets.TencentCls;
-using Google.Protobuf.WellKnownTypes;
-using Newtonsoft.Json.Linq;
-using System.Threading.Tasks;
 
 namespace NLog.Targets.TencentClsTarget
 {
@@ -94,16 +91,16 @@ namespace NLog.Targets.TencentClsTarget
 
         [RequiredParameter]
         public string Region { get => (_region as SimpleLayout)?.Text; set => _region = value ?? string.Empty; }
+
         [RequiredParameter]
         public string TopicId { get => (_topicId as SimpleLayout)?.Text; set => _topicId = value ?? string.Empty; }
-        public string Action { get => _action == null ? UPLOAD_LOG_URL: (_action as SimpleLayout)?.Text; set => _action = value ?? string.Empty; }
+
+        public string Action { get => _action == null ? UPLOAD_LOG_URL : (_action as SimpleLayout)?.Text; set => _action = value ?? string.Empty; }
         public string Service { get => _service == null ? SERVICE : (_service as SimpleLayout)?.Text; set => _service = value ?? string.Empty; }
         public string Path { get => _path == null ? string.Empty : (_path as SimpleLayout)?.Text; set => _path = value ?? string.Empty; }
 
-    
         public bool IncludeDefaultFields { get; set; } = true;
 
-        
         public TencentClsTarget()
         {
             Name = "TencentCls";
@@ -165,7 +162,7 @@ namespace NLog.Targets.TencentClsTarget
                     { X_CLS_HASH_KEY, "" }
                 };
                 // ConfigureAwait 放弃使用上下文
-                var result = await _client.CallOctetStream(Action, Service, headers,  payload).ConfigureAwait(false);
+                var result = await _client.CallOctetStream(Action, Service, headers, payload).ConfigureAwait(false);
                 if (result == null || result.Response == null)
                 {
                     InternalLogger.Error($"TencentCls: Server error: Response is null");
@@ -186,6 +183,7 @@ namespace NLog.Targets.TencentClsTarget
             }
             return true;
         }
+
         private byte[] FormPayload(ICollection<AsyncLogEventInfo> logEvents)
         {
             LogGroup logGroup = new LogGroup();
@@ -194,9 +192,9 @@ namespace NLog.Targets.TencentClsTarget
             {
                 Log log = new Log();
                 var logEvent = ev.LogEvent;
-               
+
                 var document = GenerateDocumentProperties(logEvent);
-                foreach(var item in document)
+                foreach (var item in document)
                 {
                     if (item.Key == "message")
                     {
@@ -229,7 +227,6 @@ namespace NLog.Targets.TencentClsTarget
                         var content = new Log.Types.Content() { Key = item.Key, Value = item.Value.ToString() };
                         log.Contents.Add(content);
                     }
-
                 }
                 //log.Contents.Capacity = log.Contents.Count;
                 logGroup.Logs.Add(log);
@@ -340,5 +337,4 @@ namespace NLog.Targets.TencentClsTarget
             return jsonSerializerSettings;
         }
     }
-    
 }

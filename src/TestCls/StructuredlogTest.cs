@@ -3,20 +3,10 @@
 using Cls;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
-using System;
-using System.Collections.Immutable;
-using System.Net;
-using System.Net.Http.Json;
-using System.Net.Sockets;
+using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
-using TencentCloud.Common.Profile;
 using TencentCloud.Common;
-using TestCls;
-using System.Collections;
-using System.Net.Http.Headers;
-using Newtonsoft.Json.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 public static class StructuredlogTest
 {
@@ -30,7 +20,8 @@ public static class StructuredlogTest
     private const string _topicId = "8e8edc72-bf58-4d8e-8240-892494981266";
     private const string _action = "StructuredLog";
     private const string _contentType = "application/x-protobuf";
-    public static void Main(string[]  args)
+
+    public static void Main(string[] args)
     {
         HttpClient client = new HttpClient();
         HttpRequestMessage request = new HttpRequestMessage();
@@ -41,20 +32,19 @@ public static class StructuredlogTest
         string urlPath = $"/{_action}";
         request.RequestUri = new Uri($"https://{_endpoint}{urlPath.ToLower()}?{queryString}");
 
-
         Cls.LogGroupList logGroupList = new Cls.LogGroupList();
         LogGroup logGroup = new LogGroup();
         Log log = new Log();
-        Log.Types.Content content = new Log.Types.Content() { Key="reqId",Value="88888888888888"};
+        Log.Types.Content content = new Log.Types.Content() { Key = "reqId", Value = "88888888888888" };
         log.Contents.Add(content);
         log.Time = DateTime.UtcNow.ToTimestamp().Seconds;
         logGroup.Logs.Add(log);
         logGroupList.LogGroupList_.Add(logGroup);
-       
+
         var body = logGroupList.ToByteArray();
         request.Content = new ByteArrayContent(body, 0, body.Length);
-       
-        var hh= BuildHeaders(_contentType, body, $"{urlPath.ToLower()}?{queryString}", queryString);
+
+        var hh = BuildHeaders(_contentType, body, $"{urlPath.ToLower()}?{queryString}", queryString);
         //var hh= BuildHeaders(_contentType, body, urlPath, queryString);
         foreach (var kvp in hh)
         {
@@ -81,21 +71,21 @@ public static class StructuredlogTest
         //request.Headers.Add("X-CLS-TopicId", "8e8edc72-bf58-4d8e-8240-892494981266");
         //request.Headers.Add("X-TC-Action", "UploadLog");
         //client.BaseAddress = new Uri(_endpoint);
-        var res = client.Send(request); 
+        var res = client.Send(request);
         StreamReader sr = new StreamReader(res.Content.ReadAsStream(), Encoding.UTF8);
         //var result = sr.ReadToEnd().Trim();
         var result = res.Content.ReadAsStringAsync().Result;
         sr.Close();
-
     }
-    private static Dictionary<string, string> BuildHeaders(string contentType, byte[] body, string canonicalURI = "/", string canonicalQueryString="")
+
+    private static Dictionary<string, string> BuildHeaders(string contentType, byte[] body, string canonicalURI = "/", string canonicalQueryString = "")
     {
         string endpoint = _endpoint;
         //if (!string.IsNullOrEmpty(this.Profile.HttpProfile.Endpoint))
         //{
         //    endpoint = this.Profile.HttpProfile.Endpoint;
         //}
-        string httpRequestMethod ="POST";
+        string httpRequestMethod = "POST";
         //string canonicalURI = "/";
         string canonicalHeaders = "content-type:" + contentType + "\nhost:" + endpoint + "\n";
         string signedHeaders = "content-type;host";
@@ -114,7 +104,7 @@ public static class StructuredlogTest
         long timestamp = DateTime.UtcNow.ToTimestamp().Seconds;
         string requestTimestamp = timestamp.ToString();
         string date = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(timestamp).ToString("yyyy-MM-dd");
-        string service =_service;
+        string service = _service;
         string credentialScope = date + "/" + service + "/" + "tc3_request";
         string hashedCanonicalRequest = SignHelper.SHA256Hex(canonicalRequest);
         string stringToSign = algorithm + "\n"
@@ -129,7 +119,7 @@ public static class StructuredlogTest
         byte[] secretService = SignHelper.HmacSHA256(secretDate, Encoding.UTF8.GetBytes(service));
         byte[] secretSigning = SignHelper.HmacSHA256(secretService, Encoding.UTF8.GetBytes("tc3_request"));
         byte[] signatureBytes = SignHelper.HmacSHA256(secretSigning, Encoding.UTF8.GetBytes(stringToSign));
-        
+
         string signature = BitConverter.ToString(signatureBytes).Replace("-", "").ToLower();
         //string signature = SignHelper(SECRET_KEY,);
 
@@ -169,6 +159,7 @@ public static class StructuredlogTest
         }
         return headers;
     }
+
     private static long ToTimestamp()
     {
 #if NET45
@@ -178,12 +169,11 @@ public static class StructuredlogTest
             return unixTime;
 #endif
 
-            DateTimeOffset expiresAtOffset = DateTimeOffset.Now;
-            var totalSeconds = expiresAtOffset.ToUnixTimeMilliseconds();
-            return totalSeconds;
-
-
+        DateTimeOffset expiresAtOffset = DateTimeOffset.Now;
+        var totalSeconds = expiresAtOffset.ToUnixTimeMilliseconds();
+        return totalSeconds;
     }
+
     public static string SHA256Hex(byte[] bytes)
     {
         //byte[] array = sHA.ComputeHash(Encoding.UTF8.GetBytes(s));

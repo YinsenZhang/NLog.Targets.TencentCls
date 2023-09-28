@@ -7,7 +7,7 @@ using System.Text;
 namespace TestWebApi;
 
 /// <summary>
-/// 
+///
 /// </summary>
 public class RequestLoggingFilter : IActionFilter
 {
@@ -15,11 +15,13 @@ public class RequestLoggingFilter : IActionFilter
     private Stopwatch _stopwatch;//统计程序耗时
     private string _reqBody;
     private readonly ILogger<RequestLoggingFilter> _logger;
+
     public RequestLoggingFilter(ILogger<RequestLoggingFilter> logger)
     {
         _stopwatch = Stopwatch.StartNew();
         _logger = logger;
     }
+
     /// <inheritdoc/>
     public void OnActionExecuted(ActionExecutedContext context)
     {
@@ -38,9 +40,10 @@ public class RequestLoggingFilter : IActionFilter
         // 读取Request
         if (request.HasFormContentType)
         {
-            var files = JsonConvert.SerializeObject(request.Form.Files,setting);
+            var files = JsonConvert.SerializeObject(request.Form.Files, setting);
             _reqBody = JsonConvert.SerializeObject(
-            new {
+            new
+            {
                 request.Form.Files,
                 request.Form
             }, setting);
@@ -63,14 +66,14 @@ public class RequestLoggingFilter : IActionFilter
 
         if (context.Exception != null)
         {
-            logDict.Add("Exception", JsonConvert.SerializeObject(context.Result,setting));
+            logDict.Add("Exception", JsonConvert.SerializeObject(context.Result, setting));
             _logger.LogError(JsonConvert.SerializeObject(logDict, setting));
         }
         else
         {
             var resJson = string.Empty;
             // 文件流返回处理
-            if( context.Result as FileStreamResult is not null)
+            if (context.Result as FileStreamResult is not null)
             {
                 var file = (FileStreamResult)context.Result;
                 resJson = JsonConvert.SerializeObject(new
@@ -83,7 +86,7 @@ public class RequestLoggingFilter : IActionFilter
             {
                 resJson = JsonConvert.SerializeObject(context.Result, setting);
             }
-            logDict["Response"]= resJson;
+            logDict["Response"] = resJson;
             _logger.LogInformation(JsonConvert.SerializeObject(logDict, setting));
         }
     }

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System;
 
 namespace TestWebApi.Controllers
 {

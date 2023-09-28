@@ -1,5 +1,4 @@
 using NLog.Web;
-using TestWebApi;
 
 var builder = WebApplication.CreateBuilder(args);
 

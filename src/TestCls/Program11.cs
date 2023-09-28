@@ -3,22 +3,17 @@
 using Cls;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
-using System;
-using System.Collections.Immutable;
-using System.Net;
-using System.Net.Http.Json;
-using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
-using TestCls;
 
 public static class Program11
 {
-    private const  string _endpoint = "ap-shanghai.cls.tencentcs.com";
+    private const string _endpoint = "ap-shanghai.cls.tencentcs.com";
     private const string _version = "2020-10-16";
     private const string SECRET_ID = "XXXX";
     private const string SECRET_KEY = "XXXX";
-    public static void Main11(string[]  args)
+
+    public static void Main11(string[] args)
     {
         HttpClient client = new HttpClient();
         HttpRequestMessage request = new HttpRequestMessage();
@@ -27,11 +22,10 @@ public static class Program11
         //client.DefaultRequestHeaders.Add("Content-Type", "application/x-protobuf");
         request.RequestUri = new Uri("https://ap-shanghai.cls.tencentcs.com" + "/structuredlog?topic_id=8e8edc72-bf58-4d8e-8240-892494981266");
 
-
         Cls.LogGroupList logGroupList = new Cls.LogGroupList();
         LogGroup logGroup = new LogGroup();
         Log log = new Log();
-        Log.Types.Content content = new Log.Types.Content() { Key="test",Value="testValue"};
+        Log.Types.Content content = new Log.Types.Content() { Key = "test", Value = "testValue" };
         log.Contents.Add(content);
         log.Time = DateTime.UtcNow.ToTimestamp().Seconds;
         logGroup.Logs.Add(log);
@@ -39,7 +33,7 @@ public static class Program11
         var s = logGroupList.ToByteString();
         request.Content = new ByteArrayContent(logGroupList.ToByteArray());
         request.Content.Headers.Add("Content-Type", "application/x-protobuf");
-        var hh= GetSign(logGroupList.ToByteArray());
+        var hh = GetSign(logGroupList.ToByteArray());
         foreach (var x in hh)
         {
             request.Headers.TryAddWithoutValidation(x.Key, x.Value);
@@ -49,8 +43,8 @@ public static class Program11
         StreamReader sr = new StreamReader(res.Content.ReadAsStream(), Encoding.UTF8);
         var result = sr.ReadToEnd().Trim();
         sr.Close();
-
     }
+
     public static string SHA256Hex(string s)
     {
         using (SHA256 algo = SHA256.Create())
@@ -64,11 +58,12 @@ public static class Program11
             return builder.ToString();
         }
     }
+
     public static string SHA256Hex(byte[] hashbytes)
     {
         using (SHA256 algo = SHA256.Create())
         {
-             //= algo.ComputeHash(Encoding.UTF8.GetBytes(s));
+            //= algo.ComputeHash(Encoding.UTF8.GetBytes(s));
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < hashbytes.Length; ++i)
             {
@@ -147,10 +142,9 @@ public static class Program11
         headers.Add("X-TC-Region", region);
         return headers;
     }
-  
+
     public static Dictionary<string, string> GetSign(byte[] requestPayload)
     {
-
         string service = "cls";
         string endpoint = _endpoint;
         string region = "ap-shanghai";

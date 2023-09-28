@@ -119,7 +119,6 @@ namespace NLog.Targets.TencentCls
 
         private static Dictionary<string, string> BuildHeaders(this AbstractClient client)
         {
-
             Dictionary<string, string> headers = new Dictionary<string, string>
             {
                 //{ "Authorization", authorization },
@@ -136,6 +135,7 @@ namespace NLog.Targets.TencentCls
             };
             return headers;
         }
+
         private static string GetAuthorization(this AbstractClient client, Dictionary<String, String> headers, string service, byte[] body)
         {
             string endpoint = client.Endpoint;
@@ -183,6 +183,7 @@ namespace NLog.Targets.TencentCls
 
             return authorization;
         }
+
         private static string SHA256Hex(byte[] bytes)
         {
             //byte[] array = sHA.ComputeHash(Encoding.UTF8.GetBytes(s));
@@ -198,14 +199,16 @@ namespace NLog.Targets.TencentCls
             }
         }
     }
+
     public class TencentCLsRes
     {
         public TencentCLsResponse Response { get; set; }
     }
+
     public class TencentCLsResponse
     {
         /// <summary>
-        /// TencentCLs 返回 
+        /// TencentCLs 返回
         /// </summary>
         public string RequestId { get; set; }
 
@@ -221,10 +224,10 @@ namespace NLog.Targets.TencentCls
         /// 例如：nvalidParameter.Content
         /// </summary>
         public string Code { get; set; }
+
         /// <summary>
         /// 例如 parse pb failed RequestId:[e2dfb80b-fb46-4a51-868f-f0343a03bedf]
         /// </summary>
         public string Message { get; set; }
     }
 }
-

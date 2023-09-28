@@ -1,6 +1,6 @@
-﻿using System;
-using NLog.Config;
+﻿using NLog.Config;
 using NLog.Layouts;
+using System;
 
 namespace NLog.Targets.TencentClsTarget
 {
@@ -20,7 +20,7 @@ namespace NLog.Targets.TencentClsTarget
         /// Value with NLog <see cref="NLog.Layouts.Layout"/> rendering support
         /// </summary>
         [RequiredParameter]
-        public Layout Layout { get; set; } 
+        public Layout Layout { get; set; }
 
         /// <summary>
         /// Custom type conversion from default string to other type
